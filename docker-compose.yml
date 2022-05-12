@@ -3,9 +3,12 @@ services:
   proxy:
     image: nginx:custom
     container_name: proxy
-    ports:
-      - "80:80"
-      - "443:443"
+    build:
+      context: nginx-custom
+    network_mode: host
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
     volumes:
       - ./.htpasswd/:/etc/nginx/.htpasswd:ro
       - ./web:/var/www/viswaconsult.com/
@@ -13,3 +16,23 @@ services:
       - ./conf.d:/etc/nginx/conf.d
       - /etc/timezone:/etc/timezone
       - /etc/localtime:/etc/localtime
+  backend:
+    image: node
+    container_name: backend
+    # expose:
+    #   - 3000
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend:/app
+    entrypoint: ["/bin/sh", "-c", "cd /app && npm i && node server.js"]
+    network_mode: host
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    # ports:
+    # - "27017:27017"
+    volumes:
+      - ./db-data:/data/db
+    network_mode: host
