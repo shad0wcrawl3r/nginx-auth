@@ -31,8 +31,9 @@ services:
   mongo:
     image: mongo
     container_name: mongo
-    # ports:
-    # - "27017:27017"
     volumes:
-      - ./db-data:/data/db
+      - db-data:/data/db
     network_mode: host
+
+volumes:
+  db-data: {}
